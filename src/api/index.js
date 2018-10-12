@@ -8,11 +8,11 @@ export const reqAddress = (geohash) => ajax ('/api/position/'+geohash)
 //[http://localhost:3000/position/40.10038,116.36867](http://localhost:3000/position/40.10038,116.36867)
 
 // ## 2、获取食品分类列表
-export const reqcategorys = () => ajax('/index_category')
+export const reqcategorys = () => ajax('/api/index_category')
 
 
 // ## 3、根据经纬度获取商铺列表
-export const reqShop = ({latitude,longitude}) => ajax('/shops',{latitude,longitude})
+export const reqShop= (latitude,longitude) => ajax('/api/shops',{latitude,longitude})
 //[http://localhost:3000/shops?latitude=40.10038&longitude=116.36867](http://localhost:3000/shops?latitude=40.10038&longitude=116.36867)
 
 // export const reqShop = (latitude,longitude) => ajax('/shops',{latitude,longitude})

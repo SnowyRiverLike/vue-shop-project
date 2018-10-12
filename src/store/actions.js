@@ -43,7 +43,8 @@ export default {
   async getShops({commit, state}) {
     //发送ajax请求
     const {latitude, longitude} = state
-    const result = await reqShop(latitude + ',' + longitude)  //{code: 0 , data: address}
+    const result = await reqShop(latitude , longitude)
+
     if (result.code === 0) {
       const shops = result.data
       //commit给mutation
