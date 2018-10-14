@@ -4,16 +4,18 @@
       <div class="login_header">
         <h2 class="login_logo">硅谷外卖</h2>
         <div class="login_header_title">
-          <a href="javascript:;" class="on">短信登录</a>
-          <a href="javascript:;">密码登录</a>
+          <a href="javascript:;" :class="{on: loginWay}" @click="loginWay=true">短信登录</a>
+          <a href="javascript:;" :class="{on:!loginWay}" @click="loginWay=false">密码登录</a>
         </div>
       </div>
       <div class="login_content">
         <form>
-          <div class="on">
+          <div :class="{on: loginWay}">
             <section class="login_message">
-              <input type="tel" maxlength="11" placeholder="手机号">
-              <button disabled="disabled" class="get_verification">获取验证码</button>
+              <input type="tel" maxlength="11" placeholder="手机号" v-model="phone">
+              <button :disabled="!isRightPhone || computeTime>0" class="get_verification" :class="{right_phone_number: isRightPhone}" @click="sendCode">
+                {{computeTime>0 ? `已发送(${computeTime}s)` : '获取验证码'}}
+              </button>
             </section>
             <section class="login_verification">
               <input type="tel" maxlength="8" placeholder="验证码">
@@ -23,16 +25,16 @@
               <a href="javascript:;">《用户服务协议》</a>
             </section>
           </div>
-          <div>
+          <div :class="{on: !loginWay}">
             <section>
               <section class="login_message">
                 <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名">
               </section>
               <section class="login_verification">
-                <input type="tel" maxlength="8" placeholder="密码">
-                <div class="switch_button off">
-                  <div class="switch_circle"></div>
-                  <span class="switch_text">...</span>
+                <input :type="isShowPwd? 'text' :'password'" maxlength="8" placeholder="密码">
+                <div class="switch_button" @click="isShowPwd=!isShowPwd" :class="isShowPwd? 'on' : 'off'"><!--类名不确定不用括号-->
+                  <div class="switch_circle" :class="{right: isShowPwd}"></div>  <!--类名确定值显示不显示不确定-->
+                  <span class="switch_text">{{isShowPwd ? 'abc' : ''}}</span>    <!--显示密码为true吗，显示就显示abc不显示就为空-->
                 </div>
               </section>
               <section class="login_message">
@@ -54,7 +56,35 @@
 <script>
   export default {
     data() {
-      return {}
+      return {
+        loginWay: true,    // true: 短信, false: 密码
+        phone: '',         //手机号
+        computeTime:0,    //倒计时剩余的时间
+        isShowPwd: false  //是否显示密码
+
+      }
+    },
+    computed : {
+      isRightPhone () {
+        return /^1\d{10}$/.test(this.phone)
+      }
+    },
+    methods: {
+      //发送消息
+      sendCode () {
+        alert('----------')
+        //启动倒计时
+        this.computeTime =30
+        //启动循环定时器，每个一秒减一，直到零为止
+        const intervalId = setInterval(() => {
+//          如果时间到达0就清除定时器不然就小于0了
+          if (this.computeTime===0) {
+            clearTnterval(intervalId)
+          }
+          this.computeTime--
+        },1000)
+
+      }
     }
   };
 
@@ -79,7 +109,7 @@
         .login_header_title
           padding-top 40px
           text-align center
-          >a
+          > a
             color #333
             font-size 14px
             padding-bottom 4px
@@ -90,8 +120,8 @@
               font-weight 700
               border-bottom 2px solid #02a774
       .login_content
-        >form
-          >div
+        > form
+          > div
             display none
             &.on
               display block
@@ -121,6 +151,8 @@
                 color #ccc
                 font-size 14px
                 background transparent
+                &.right_phone_number
+                  color black
             .login_verification
               position relative
               margin-top 16px
@@ -131,7 +163,7 @@
                 font-size 12px
                 border 1px solid #ddd
                 border-radius 8px
-                transition background-color .3s,border-color .3s
+                transition background-color .3s, border-color .3s
                 padding 0 6px
                 width 30px
                 height 16px
@@ -142,14 +174,13 @@
                 right 10px
                 transform translateY(-50%)
                 &.off
-                  background #fff
+                  background #fff       //关闭
                   .switch_text
                     float right
                     color #ddd
                 &.on
-                  background #02a774
-                >.switch_circle
-                //transform translateX(27px)
+                  background #02a774   //打开绿色
+                > .switch_circle       //圆点
                   position absolute
                   top -1px
                   left -1px
@@ -158,14 +189,16 @@
                   border 1px solid #ddd
                   border-radius 50%
                   background #fff
-                  box-shadow 0 2px 4px 0 rgba(0,0,0,.1)
+                  box-shadow 0 2px 4px 0 rgba(0, 0, 0, .1)
                   transition transform .3s
+                  &.right                          //滑到右边
+                    transform translateX(27px)
             .login_hint
               margin-top 12px
               color #999
               font-size 14px
               line-height 20px
-              >a
+              > a
                 color #02a774
           .login_submit
             display block
@@ -191,7 +224,7 @@
         left 5px
         width 30px
         height 30px
-        >.iconfont
+        > .iconfont
           font-size 20px
           color #999
 </style>
