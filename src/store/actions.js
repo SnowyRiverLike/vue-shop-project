@@ -12,7 +12,9 @@ import {
 import {
   RECEIVE_ADDRESS,
   RECEIVE_CATEGORYS,
-  RECEIVE_SHOPS
+  RECEIVE_SHOPS,
+  INCREMENT_FOOD_COUNT,
+  DECREMENT_FOOD_COUNT
 } from './mutation-types'
 
 //三个异步anction获取数据发请求
@@ -51,6 +53,17 @@ export default {
       commit(RECEIVE_SHOPS, {shops})
     }
   },
+
+
+  //跟新food数量
+  updateFoodCount ({commit},{isAdd,food}) {
+    if (isAdd){ //数量增加
+
+    }else {  //数量减少
+      commit(DECREMENT_FOOD_COUNT,{food})
+
+    }
+  }
 
 
 }

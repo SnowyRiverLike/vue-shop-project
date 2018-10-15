@@ -2,11 +2,13 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import cartcontrol from './components/CartControl/CartControl.vue'
 import TopHeader from './components/TopHeader/TopHeader.vue'
 import 'swiper/dist/css/swiper.min.css'
 
 // 注册全局组件
 Vue.component('TopHeader',TopHeader)
+Vue.component('cartcontrol',cartcontrol)
 
 /* eslint-disable no-new */
 new Vue({
