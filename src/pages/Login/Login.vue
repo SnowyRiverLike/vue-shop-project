@@ -39,7 +39,7 @@
               </section>
               <section class="login_message">
                 <input type="text" maxlength="11" placeholder="验证码">
-                <img class="get_verification" src="./images/captcha.svg" alt="captcha">
+                <img class="get_verification" src="	http://localhost:4000/captcha" alt="captcha" ref="captcha" @click="updateCaptcha">
               </section>
             </section>
           </div>
@@ -57,7 +57,7 @@
   export default {
     data() {
       return {
-        loginWay: true,    // true: 短信, false: 密码
+        loginWay: false,    // true: 短信, false: 密码
         phone: '',         //手机号
         computeTime:0,    //倒计时剩余的时间
         isShowPwd: false  //是否显示密码
@@ -84,9 +84,17 @@
           this.computeTime--
         },1000)
 
-      }
+      },
+      /*法一
+      updateCaptcha (event) {
+        event.target.src = 'http://localhost:4000/captcha?time='+Date.now()  //找到img图片给他重新改地址
+      }*/
+    updateCaptcha () {
+      this.$refs.captcha.src = 'http://localhost:4000/captcha?time='+Date.now()
     }
-  };
+
+    }
+  }
 
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
