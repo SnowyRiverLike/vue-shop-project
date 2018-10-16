@@ -5,7 +5,7 @@
         <h2 class="login_logo">硅谷外卖</h2>
         <div class="login_header_title">
           <a href="javascript:;" :class="{on: loginWay}" @click="loginWay=true">短信登录</a>
-          <a href="javascript:;" :class="{on:!loginWay}" @click="loginWay=false">密码登录</a>
+          <a href="javascript:;" :class="{on: !loginWay}" @click="loginWay=false">密码登录</a>
         </div>
       </div>
       <div class="login_content">
@@ -13,7 +13,8 @@
           <div :class="{on: loginWay}">
             <section class="login_message">
               <input type="tel" maxlength="11" placeholder="手机号" v-model="phone">
-              <button :disabled="!isRightPhone || computeTime>0" class="get_verification" :class="{right_phone_number: isRightPhone}" @click="sendCode">
+              <button :disabled="!isRightPhone || computeTime>0" class="get_verification"
+                      :class="{right_phone_number: isRightPhone}" @click.prevent="sendCode">
                 {{computeTime>0 ? `已发送(${computeTime}s)` : '获取验证码'}}
               </button>
             </section>
@@ -31,15 +32,16 @@
                 <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名">
               </section>
               <section class="login_verification">
-                <input :type="isShowPwd? 'text' :'password'" maxlength="8" placeholder="密码">
-                <div class="switch_button" @click="isShowPwd=!isShowPwd" :class="isShowPwd? 'on' : 'off'"><!--类名不确定不用括号-->
-                  <div class="switch_circle" :class="{right: isShowPwd}"></div>  <!--类名确定值显示不显示不确定-->
-                  <span class="switch_text">{{isShowPwd ? 'abc' : ''}}</span>    <!--显示密码为true吗，显示就显示abc不显示就为空-->
+                <input :type="isShowPwd? 'text' : 'password'" maxlength="8" placeholder="密码">
+                <div class="switch_button" @click="isShowPwd=!isShowPwd" :class="isShowPwd?'on':'off'">
+                  <div class="switch_circle" :class="{right: isShowPwd}"></div>
+                  <span class="switch_text">{{isShowPwd ? 'abc' : '...'}}</span>
                 </div>
               </section>
               <section class="login_message">
                 <input type="text" maxlength="11" placeholder="验证码">
-                <img class="get_verification" src="	http://localhost:4000/captcha" alt="captcha" ref="captcha" @click="updateCaptcha">
+                <img class="get_verification" src="http://localhost:4000/captcha" alt="captcha"
+                     ref='captcha' @click="updateCaptcha">
               </section>
             </section>
           </div>
@@ -54,48 +56,72 @@
   </section>
 </template>
 <script>
+  import { MessageBox, Toast} from 'mint-ui';
+  import {reqSendCode, reqPwdLogin, reqSmsLogin} from '../../api'
+
   export default {
     data() {
       return {
-        loginWay: false,    // true: 短信, false: 密码
-        phone: '',         //手机号
-        computeTime:0,    //倒计时剩余的时间
-        isShowPwd: false  //是否显示密码
-
+        loginWay: false, // true: 短信, false: 密码
+        phone: '', // 手机号
+        computeTime: 0, // 倒计时剩余的时间
+        isShowPwd: false, // 是否显示密码
       }
     },
-    computed : {
-      isRightPhone () {
+
+    computed: {
+      isRightPhone() {
         return /^1\d{10}$/.test(this.phone)
       }
     },
+
     methods: {
-      //发送消息
-      sendCode () {
-        alert('----------')
-        //启动倒计时
-        this.computeTime =30
-        //启动循环定时器，每个一秒减一，直到零为止
+      // 发送验证码
+      async sendCode () {
+        // alert('----')
+
+        // 启动倒计时
+        this.computeTime = 30
+        // 启动循环定时器, 每隔1s减1, 直到0为止
         const intervalId = setInterval(() => {
-//          如果时间到达0就清除定时器不然就小于0了
-          if (this.computeTime===0) {
-            clearTnterval(intervalId)
+          if(this.computeTime<=0) {
+            // 清除定时器
+            clearInterval(intervalId)
+            this.computeTime = 0
+            return
           }
           this.computeTime--
-        },1000)
+        }, 1000)
 
+        // 发请求: 发送短信验证码
+        const result = await reqSendCode(this.phone)
+        if(result.code===0) {
+          //alert('验证码已发送')
+          Toast('验证码已发送')
+        } else {
+          // 停止倒计时
+          this.computeTime = 0
+          // 显示警告提示
+         // alert('警告提示: '+result.msg)
+          MessageBox.confirm(+result.msg).then(action => {
+      console.log('点击确定')
+          });
+        }
       },
-      /*法一
-      updateCaptcha (event) {
-        event.target.src = 'http://localhost:4000/captcha?time='+Date.now()  //找到img图片给他重新改地址
-      }*/
-    updateCaptcha () {
-      this.$refs.captcha.src = 'http://localhost:4000/captcha?time='+Date.now()
-    }
 
+
+      /*法一//更新图形验证码
+
+         updateCaptcha (event) {
+           event.target.src = 'http://localhost:4000/captcha?time='+Date.now()  //找到img图片给他重新改地址
+         }*/
+      // 更新图形验证码
+      updateCaptcha () {
+        // 告诉浏览一个新的url, 浏览器就会自动发请求
+        this.$refs.captcha.src = 'http://localhost:4000/captcha?time='+Date.now()
+      }
     }
   }
-
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
   @import "../../common/stylus/mixins.styl"
@@ -182,13 +208,13 @@
                 right 10px
                 transform translateY(-50%)
                 &.off
-                  background #fff       //关闭
+                  background #fff
                   .switch_text
                     float right
                     color #ddd
                 &.on
-                  background #02a774   //打开绿色
-                > .switch_circle       //圆点
+                  background #02a774
+                > .switch_circle
                   position absolute
                   top -1px
                   left -1px
@@ -199,7 +225,7 @@
                   background #fff
                   box-shadow 0 2px 4px 0 rgba(0, 0, 0, .1)
                   transition transform .3s
-                  &.right                          //滑到右边
+                  &.right
                     transform translateX(27px)
             .login_hint
               margin-top 12px
