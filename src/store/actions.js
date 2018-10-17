@@ -5,7 +5,7 @@
 import {
   reqAddress,
   reqcategorys,
-  reqShop
+  reqShop,
 } from '../api'
 
 //引入mutation-types里的常量
@@ -13,8 +13,9 @@ import {
   RECEIVE_ADDRESS,
   RECEIVE_CATEGORYS,
   RECEIVE_SHOPS,
+  RECEIVE_USER,
   INCREMENT_FOOD_COUNT,
-  DECREMENT_FOOD_COUNT
+  DECREMENT_FOOD_COUNT,
 } from './mutation-types'
 
 //三个异步anction获取数据发请求
@@ -32,7 +33,7 @@ export default {
   },
 
   // 异步获取地址categorys
-  async getCategorys ({commit}) {
+  async getCategorys({commit}) {
     //发送ajax请求
     const result = await reqcategorys()
     if (result.code === 0) {
@@ -45,7 +46,7 @@ export default {
   async getShops({commit, state}) {
     //发送ajax请求
     const {latitude, longitude} = state
-    const result = await reqShop(latitude , longitude)
+    const result = await reqShop(latitude, longitude)
 
     if (result.code === 0) {
       const shops = result.data
@@ -54,16 +55,20 @@ export default {
     }
   },
 
+//同步保存商家的信息
+  saveUser({commit},user) {
+    commit(RECEIVE_USER, {user})
+  },
 
   //跟新food数量
-  updateFoodCount ({commit},{isAdd,food}) {
-    if (isAdd){ //数量增加
+/*  updateFoodCount({commit}, {isAdd, food}) {
+    if (isAdd) { //数量增加
 
-    }else {  //数量减少
-      commit(DECREMENT_FOOD_COUNT,{food})
+    } else {  //数量减少
+      commit(DECREMENT_FOOD_COUNT, {food})
 
     }
-  }
+  }*/
 
 
 }

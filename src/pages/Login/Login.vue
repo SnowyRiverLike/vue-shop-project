@@ -150,7 +150,7 @@
         // 更新验证码
         this.updateCaptcha()
 
-        debugger
+//        debugger
         // 根据请求的结果进行相应处理
         if(result.code===0) { // 成功
           const user = result.data

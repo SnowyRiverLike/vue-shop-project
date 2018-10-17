@@ -19,12 +19,11 @@ export const reqShop= (latitude,longitude) => ajax('/api/shops',{latitude,longit
 //      传这么传 latitude,longitude顺序要对，{latitude,longitude}属性名要传不管顺序如果传三个就用对象方式传
 
       // 4 账号登陆密码
-export const reqPwdLogin = (name, pwd, captcha) => ajax('/api/login_pwd', {
+export const reqPwdLogin = ({name, pwd, captcha}) => ajax('/api/login_pwd', {
   name,
   pwd,
   captcha
 }, 'POST')
-
 /**
  * 获取短信验证码
  */
@@ -38,7 +37,7 @@ export const reqSmsLogin = (phone, code) => ajax('/api/login_sms', {phone, code}
 /**
  * 获取用户信息(根据会话)
  */
- export const reqUser = () => ajax('/api/userinfo')
+export const reqUser = () => ajax('/api/userinfo')
 
 
 
