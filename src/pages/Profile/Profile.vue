@@ -1,18 +1,23 @@
 <template>
   <section class="profile">
     <TopHeader title="我的"/>
-    <section class="profile-number" @click="$router.push('/login')">
+    <section class="profile-number" @click="$router.push(user._id ? '/userinfo' : '/login')">
       <a href="javascript:" class="profile-link">
         <div class="profile_image">
           <i class="iconfont icon-person"></i>
         </div>
         <div class="user-info">
-          <p class="user-info-top">登录/注册</p>
+          <p class="user-info-top" v-if="!user.phone">
+            {{user.name ? user.name : '登录/注册'}}
+            <!--{{user._id  ? user.name :'登录/注册'}}-->
+          </p>
           <p>
-                <span class="user-icon">
-                  <i class="iconfont icon-shouji icon-mobile"></i>
-                </span>
-            <span class="icon-mobile-number">暂无绑定手机号</span>
+            <span class="user-icon">
+              <i class="iconfont icon-shouji icon-mobile"></i>
+            </span>
+            <span class="icon-mobile-number">   <!--v-if="!user.name"-->
+              {{user.phone ? user.phone : '暂无绑定手机号'}}
+            </span>
           </p>
         </div>
         <span class="arrow">
@@ -88,12 +93,29 @@
         </div>
       </a>
     </section>
+    <section class="profile_my_order border-1px" v-if="user._id">
+      <mt-button type="danger" style="width: 100%;" @click="logout">退出登陆</mt-button>
+    </section>
   </section>
 </template>
 <script>
+  import {MessageBox} from 'mint-ui'
+  import {mapState} from 'vuex'
+
   export default {
-    data() {
-      return {}
+    computed: {
+      ...mapState(['user'])
+    },
+
+    methods: {
+      logout() {
+        MessageBox.confirm('确定退出吗？').then(action => {
+          //发退出的请求，并且重置user状态信息
+          this.$store.dispatch('logout')
+        }, action => {
+          console.log('取消')
+        });
+      }
     }
   }
 </script>
@@ -198,12 +220,12 @@
         display flex
         align-items center
         padding-left 15px
-        >span
+        > span
           display flex
           align-items center
           width 20px
           height 20px
-          >.iconfont
+          > .iconfont
             margin-left -10px
             font-size 30px
           .icon-order-s

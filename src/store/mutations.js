@@ -5,6 +5,7 @@ import {
   RECEIVE_ADDRESS,
   RECEIVE_CATEGORYS,
   RECEIVE_SHOPS,
+  RESET_USER,
  /* INCREMENT_FOOD_COUNT,
  */ DECREMENT_FOOD_COUNT,
   RECEIVE_USER
@@ -22,6 +23,9 @@ export default {
   },
   [RECEIVE_USER](state, {user}) {
     state.user = user
+  },
+  [RESET_USER](state) {
+    state.user = {}
   },
 
   /*[INCREMENT_FOOD_COUNT](state, {food}) {

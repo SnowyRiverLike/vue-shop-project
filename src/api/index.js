@@ -40,4 +40,5 @@ export const reqSmsLogin = (phone, code) => ajax('/api/login_sms', {phone, code}
 export const reqUser = () => ajax('/api/userinfo')
 
 
+export const reqLogout = () => ajax('/api/logout')
 

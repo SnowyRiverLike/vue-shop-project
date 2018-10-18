@@ -13,6 +13,8 @@
    mounted () {
      //异步获取address，并保存到state里
       this.$store.dispatch('getAddress')
+     //异步获取user,并且保存到state里
+      this.$store.dispatch('getUser')
     },
     components: {
       FooterGuide
